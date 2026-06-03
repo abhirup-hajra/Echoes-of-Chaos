@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echoes of Chaos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=VT323&display=swap');
+
+        :root {
+            --matrix-glow: rgba(168, 85, 247, 0.4);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #050508;
+            overflow-x: hidden;
+        }
+
+        .pixel-font {
+            font-family: 'VT323', monospace;
+        }
+
+        /* Scanline Overlay */
+        .scanlines {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 100;
+        }
+
+        /* Subtle chaotic drift animation */
+        @keyframes drift {
+            0% { transform: translate(0px, 0px) rotate(0deg); }
+            50% { transform: translate(4px, -4px) rotate(0.5deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+        }
+
+        .glitch-card {
+            background: rgba(13, 12, 22, 0.7);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            backdrop-filter: blur(12px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .glitch-card:hover {
+            border-color: rgba(168, 85, 247, 0.5);
+            box-shadow: 0 0 20px var(--matrix-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Tooltip style */
+        .copied-popup {
+            animation: popUp 1.5s ease-in-out forwards;
+        }
+
+        @keyframes popUp {
+            0% { opacity: 0; transform: translate(-50%, 10px); }
+            15% { opacity: 1; transform: translate(-50%, 0); }
+            85% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -10px); }
+        }
+    </style>
+</head>
+<body class="text-gray-200 min-h-screen flex flex-col justify-between selection:bg-purple-500 selection:text-black">
+    
+    <div class="scanlines"></div>
+
+    <div class="fixed inset-0 opacity-10 pointer-events-none bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+    
+    <header class="container mx-auto max-w-4xl pt-16 px-6 text-center relative z-10">
+        <div class="inline-block animate-[drift_8s_infinite_ease-in-out]">
+            <h1 class="pixel-font text-6xl md:text-8xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-b from-purple-400 to-indigo-600 drop-shadow-[0_4px_12px_rgba(168,85,247,0.3)]">
+                ECHOES OF CHAOS
+            </h1>
+        </div>
+        <p class="text-sm md:text-base text-gray-400 tracking-widest uppercase mt-4 max-w-md mx-auto border-t border-b border-purple-900/40 py-2">
+            Fabric 1.21.11 Server
+        </p>
+    </header>
+
+    <main class="container mx-auto max-w-4xl px-6 my-12 relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <div class="md:col-span-7 flex flex-col gap-6">
+            
+            <div id="ip-card" onclick="copyIP()" class="glitch-card p-6 rounded-lg cursor-pointer relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-r from-purple-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-purple-400 font-bold uppercase tracking-wider mb-1">Click to Copy Address</p>
+                        <p id="ip-text" class="text-xl md:text-2xl font-bold font-mono tracking-tight text-white">play.echoesofchaos.qzz.io</p>
+                    </div>
+                    <div class="bg-purple-950/40 p-3 rounded border border-purple-800/30 group-hover:scale-105 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-800/60 text-xs text-gray-400">
+                    Required Framework / Version: <span class="text-gray-200 font-mono">Vanilla/Fabric/Forge/NeoForge/Quilt/etc. 1.21.11</span>
+                </div>
+                
+                <div id="copy-toast" class="hidden absolute left-1/2 bottom-2 bg-purple-600 text-white font-bold text-xs px-3 py-1 rounded copied-popup">COPIED TO CLIPBOARD</div>
+            </div>
+
+            <a href="https://discord.echoesofchaos.qzz.io/" target="_blank" class="glitch-card p-6 rounded-lg flex justify-between items-center group relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div>
+                    <p class="text-xs text-indigo-400 font-bold uppercase tracking-wider mb-1">Community Hub</p>
+                    <p class="text-xl md:text-2xl font-bold text-white">Join the Discord</p>
+                </div>
+                <div class="bg-indigo-950/40 p-3 rounded border border-indigo-800/30 group-hover:translate-x-1 transition-transform">
+                    <svg class="h-6 w-6 text-indigo-400 fill-current" viewBox="0 0 127.14 96.36">
+                        <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.7-10.93,68.6,68.6,0,0,1-10.64-5.12c.91-.67,1.81-1.37,2.67-2.1a75.22,75.22,0,0,0,72.94,0c.86.73,1.76,1.43,2.67,2.1a68.86,68.86,0,0,1-10.64,5.12,74.74,74.74,0,0,0,6.7,10.93,105.54,105.54,0,0,0,31.05-18.83C129.55,49.14,123.6,26.47,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
+                    </svg>
+                </div>
+            </a>
+
+            <div class="glitch-card p-6 rounded-lg flex-1 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-xs uppercase tracking-widest font-bold text-gray-400">Live Infrastructure Matrix</span>
+                    <div class="flex items-center gap-2">
+                        <span id="status-pulse" class="h-2.5 w-2.5 rounded-full bg-yellow-500 animate-pulse"></span>
+                        <span id="status-text" class="text-xs font-mono uppercase text-yellow-500 tracking-wider">Pinging...</span>
+                    </div>
+                </div>
+
+                <div class="my-auto py-4">
+                    <div class="flex items-baseline gap-2">
+                        <span id="player-count" class="text-5xl font-bold font-mono text-white tracking-tight">--</span>
+                        <span id="player-max" class="text-xl text-gray-500 font-mono">/ --</span>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-1">Active players</p>
+                </div>
+
+                <div id="player-list-container" class="border-t border-gray-800/60 pt-3 mt-2 hidden">
+                    <p class="text-xs uppercase font-bold text-gray-500 tracking-wider mb-2">Connected Entities:</p>
+                    <div id="player-list" class="flex flex-wrap gap-2 max-h-24 overflow-y-auto pr-1 text-xs text-purple-300 font-mono">
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="md:col-span-5">
+            <div class="glitch-card p-6 rounded-lg h-full flex flex-col justify-between border-l-2 border-l-purple-500/40">
+                <div>
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="text-lg">👨‍💻</span>
+                        <h3 class="text-sm font-bold uppercase tracking-widest text-gray-300">Server Specifications</h3>
+                    </div>
+                    
+                    <ul class="space-y-4 font-mono text-sm">
+                        <li class="flex flex-col border-b border-gray-900 pb-2">
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Compute Core</span>
+                            <span class="text-gray-200 mt-0.5">16 cores of Intel® Xeon® Platinum 8573C</span>
+                        </li>
+                        <li class="flex flex-col border-b border-gray-900 pb-2">
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Memory Allocation</span>
+                            <span class="text-gray-200 mt-0.5">16 GB RAM</span>
+                        </li>
+                        <li class="flex flex-col border-b border-gray-900 pb-2">
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Storage Boundary</span>
+                            <span class="text-gray-200 mt-0.5">16 GB Storage</span>
+                        </li>
+                        <li class="flex flex-col border-b border-gray-900 pb-2">
+                            <span class="text-xs text-gray-500 uppercase tracking-wider">Temporal Availability</span>
+                            <span class="text-gray-200 mt-0.5">Mostly 24/7</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-gray-900 flex items-center justify-between text-xs text-gray-400">
+                    <span>Node Location:</span>
+                    <span class="font-bold text-white flex items-center gap-1.5 bg-gray-900/80 px-2.5 py-1 rounded border border-gray-800">
+                        India 🇮🇳
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="container mx-auto max-w-4xl px-6 pb-8 text-center text-xs text-gray-600 tracking-wider relative z-10 font-mono">
+        &copy; 2026 Echoes of Chaos. Not affiliated with Mojang or Microsoft.
+    </footer>
+
+    <script>
+        const IP = "play.echoesofchaos.qzz.io";
+
+        function copyIP() {
+            navigator.clipboard.writeText(IP).then(() => {
+                const toast = document.getElementById('copy-toast');
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 1500);
+            });
+        }
+
+        async function fetchStatus() {
+            const pulse = document.getElementById('status-pulse');
+            const text = document.getElementById('status-text');
+            const count = document.getElementById('player-count');
+            const max = document.getElementById('player-max');
+            const listContainer = document.getElementById('player-list-container');
+            const list = document.getElementById('player-list');
+
+            try {
+                const response = await fetch(`https://api.mcsrvstat.us/3/${IP}`);
+                const data = await response.json();
+
+                if (data.online) {
+                    pulse.className = "h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]";
+                    text.innerText = "Online";
+                    text.className = "text-xs font-mono uppercase text-emerald-500 tracking-wider";
+                    
+                    count.innerText = data.players.online;
+                    max.innerText = `/ ${data.players.max}`;
+
+                    if (data.players.list && data.players.list.length > 0) {
+                        listContainer.classList.remove('hidden');
+                        list.innerHTML = data.players.list.map(p => 
+                            `<span class="bg-purple-950/40 border border-purple-900/50 px-2 py-0.5 rounded">${p.name || p}</span>`
+                        ).join('');
+                    } else {
+                        listContainer.classList.add('hidden');
+                    }
+                } else {
+                    pulse.className = "h-2.5 w-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]";
+                    text.innerText = "Offline";
+                    text.className = "text-xs font-mono uppercase text-rose-500 tracking-wider";
+                    count.innerText = "0";
+                    max.innerText = "/ 0";
+                    listContainer.classList.add('hidden');
+                }
+            } catch (error) {
+                pulse.className = "h-2.5 w-2.5 rounded-full bg-amber-500";
+                text.innerText = "Error";
+                text.className = "text-xs font-mono uppercase text-amber-500 tracking-wider";
+            }
+        }
+
+        // Initialize status loops
+        fetchStatus();
+        setInterval(fetchStatus, 30000);
+    </script>
+</body>
+</html>
